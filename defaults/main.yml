@@ -1,0 +1,5 @@
+---
+security_fail2ban_enabled: true
+security_fail2ban_bantime: 600
+security_fail2ban_maxretry: 5
+security_fail2ban_jail_configuration: []

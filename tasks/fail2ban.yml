@@ -1,0 +1,38 @@
+---
+- name: Install fail2ban (CentOS < 8).
+  raw: yum install fail2ban
+  when: ansible_distribution == 'CentOS' and ansible_distribution_version is version('8', '<')
+
+- name: Install fail2ban (RedHat).
+  package:
+    name: fail2ban
+    state: present
+    enablerepo: epel
+  when: ansible_os_family == 'RedHat' and not (ansible_distribution == 'CentOS' and ansible_distribution_version is version('8', '<'))
+
+- name: Install fail2ban (Debian).
+  package:
+    name: fail2ban
+    state: present
+  when: ansible_os_family == 'Debian'
+
+
+- name: configure jail.local
+  ini_file:
+    path: /etc/fail2ban/jail.local
+    section: "{{ item.section }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    mode: "0640"
+  loop: "{{ security_fail2ban_base_jail_configuration + security_fail2ban_jail_configuration }}"
+  notify:
+    - restart fail2ban
+  loop_control:
+    label: "{{ item.option }}"
+
+
+- name: Ensure fail2ban is running and enabled on boot.
+  service:
+    name: fail2ban
+    state: started
+    enabled: true
