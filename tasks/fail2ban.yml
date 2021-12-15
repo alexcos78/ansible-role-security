@@ -1,6 +1,6 @@
 ---
 - name: Install fail2ban (CentOS < 8).
-  raw: yum install fail2ban
+  raw: sudo yum install -y fail2ban
   when: ansible_distribution == 'CentOS' and ansible_distribution_version is version('8', '<')
 
 - name: Install fail2ban (RedHat).
